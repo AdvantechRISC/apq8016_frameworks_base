@@ -20,7 +20,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
-
+import android.os.SystemProperties;
 import com.android.internal.logging.MetricsLogger;
 import com.android.systemui.Prefs;
 import com.android.systemui.R;
@@ -101,7 +101,9 @@ public class HotspotTile extends QSTile<QSTile.BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
-        state.visible = mController.isHotspotSupported() && mUsageTracker.isRecentlyUsed();
+        //state.visible = mController.isHotspotSupported() && mUsageTracker.isRecentlyUsed();
+        boolean prop = SystemProperties.getBoolean("persist.qsm.hotspot", true);
+        state.visible = mController.isHotspotSupported() && mUsageTracker.isRecentlyUsed() && (prop);
         state.label = mContext.getString(R.string.quick_settings_hotspot_label);
 
         if (arg instanceof Boolean) {

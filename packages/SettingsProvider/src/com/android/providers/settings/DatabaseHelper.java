@@ -1107,8 +1107,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
                 if (c == null || c.getCount() == 0) {
                     stmt = db.compileStatement("INSERT INTO system(name,value)"
                             + " VALUES(?,?);");
-                    loadBooleanSetting(stmt, Settings.System.LOCKSCREEN_DISABLED,
-                            R.bool.def_lockscreen_disabled);
+                    //loadBooleanSetting(stmt, Settings.System.LOCKSCREEN_DISABLED,
+                    //        R.bool.def_lockscreen_disabled);
+                    loadBooleanSettingFromCust(stmt, Settings.System.LOCKSCREEN_DISABLED,
+                            R.bool.def_lockscreen_disabled, "persist.def.lockscr_disabled");
                 }
                 db.setTransactionSuccessful();
             } finally {
@@ -2131,8 +2133,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
         try {
             stmt = db.compileStatement("INSERT OR REPLACE INTO system(name,value)"
                     + " VALUES(?,?);");
-            loadIntegerSetting(stmt, Settings.System.SCREEN_OFF_TIMEOUT,
-                    R.integer.def_screen_off_timeout);
+            //loadIntegerSetting(stmt, Settings.System.SCREEN_OFF_TIMEOUT,
+            //        R.integer.def_screen_off_timeout);
+            loadIntegerSettingFromCust(stmt, Settings.System.SCREEN_OFF_TIMEOUT, 
+                      R.integer.def_screen_off_timeout, "persist.def.screen_off_timeout");
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -2357,8 +2361,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
 
             loadBooleanSetting(stmt, Settings.System.DIM_SCREEN,
                     R.bool.def_dim_screen);
-            loadIntegerSetting(stmt, Settings.System.SCREEN_OFF_TIMEOUT,
-                    R.integer.def_screen_off_timeout);
+            //loadIntegerSetting(stmt, Settings.System.SCREEN_OFF_TIMEOUT,
+            //        R.integer.def_screen_off_timeout);
+            loadIntegerSettingFromCust(stmt, Settings.System.SCREEN_OFF_TIMEOUT, 
+                      R.integer.def_screen_off_timeout, "persist.def.screen_off_timeout");
 
             // Set default cdma DTMF type
             loadSetting(stmt, Settings.System.DTMF_TONE_TYPE_WHEN_DIALING, 0);
@@ -2369,16 +2375,19 @@ class DatabaseHelper extends SQLiteOpenHelper {
             // Set default tty mode
             loadSetting(stmt, Settings.System.TTY_MODE, 0);
 
-            loadIntegerSetting(stmt, Settings.System.SCREEN_BRIGHTNESS,
-                    R.integer.def_screen_brightness);
+            //loadIntegerSetting(stmt, Settings.System.SCREEN_BRIGHTNESS,
+            //        R.integer.def_screen_brightness);
+            loadIntegerSettingFromCust(stmt, Settings.System.SCREEN_BRIGHTNESS, R.integer.def_screen_brightness, "persist.def.screen_brightness");
 
             loadBooleanSetting(stmt, Settings.System.SCREEN_BRIGHTNESS_MODE,
                     R.bool.def_screen_brightness_automatic_mode);
 
             loadDefaultAnimationSettings(stmt);
 
-            loadBooleanSetting(stmt, Settings.System.ACCELEROMETER_ROTATION,
-                    R.bool.def_accelerometer_rotation);
+            //loadBooleanSetting(stmt, Settings.System.ACCELEROMETER_ROTATION,
+            //        R.bool.def_accelerometer_rotation);
+            loadBooleanSettingFromCust(stmt, Settings.System.ACCELEROMETER_ROTATION,
+                            R.bool.def_accelerometer_rotation, "persist.def.acce_rotation");
 
             loadDefaultHapticSettings(stmt);
 
@@ -2483,8 +2492,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
             if (SystemProperties.getBoolean("ro.lockscreen.disable.default", false) == true) {
                 loadSetting(stmt, Settings.System.LOCKSCREEN_DISABLED, "1");
             } else {
-                loadBooleanSetting(stmt, Settings.System.LOCKSCREEN_DISABLED,
-                        R.bool.def_lockscreen_disabled);
+                //loadBooleanSetting(stmt, Settings.System.LOCKSCREEN_DISABLED,
+                //        R.bool.def_lockscreen_disabled);
+                loadBooleanSettingFromCust(stmt, Settings.System.LOCKSCREEN_DISABLED,
+                            R.bool.def_lockscreen_disabled, "persist.def.lockscr_disabled");
             }
 
             loadBooleanSetting(stmt, Settings.Secure.SCREENSAVER_ENABLED,
@@ -2577,13 +2588,19 @@ class DatabaseHelper extends SQLiteOpenHelper {
             loadBooleanSetting(stmt, Settings.Global.AUTO_TIME_ZONE,
                     R.bool.def_auto_time_zone); // Sync timezone to NITZ
 
-            loadSetting(stmt, Settings.Global.STAY_ON_WHILE_PLUGGED_IN,
+            //loadSetting(stmt, Settings.Global.STAY_ON_WHILE_PLUGGED_IN,
+            //        ("1".equals(SystemProperties.get("ro.kernel.qemu")) ||
+            //            mContext.getResources().getBoolean(R.bool.def_stay_on_while_plugged_in))
+            //         ? 1 : 0);
+            loadSettingFromCust(stmt, Settings.Global.STAY_ON_WHILE_PLUGGED_IN,
                     ("1".equals(SystemProperties.get("ro.kernel.qemu")) ||
                         mContext.getResources().getBoolean(R.bool.def_stay_on_while_plugged_in))
-                     ? 1 : 0);
+                     ? 1 : 0, "persist.def.stay_awake");
 
-            loadIntegerSetting(stmt, Settings.Global.WIFI_SLEEP_POLICY,
-                    R.integer.def_wifi_sleep_policy);
+            //loadIntegerSetting(stmt, Settings.Global.WIFI_SLEEP_POLICY,
+            //        R.integer.def_wifi_sleep_policy);
+            loadIntegerSettingFromCust(stmt, Settings.System.WIFI_SLEEP_POLICY, 
+                    R.integer.def_wifi_sleep_policy, "persist.def.wifi_policy");
 
             loadSetting(stmt, Settings.Global.MODE_RINGER,
                     AudioManager.RINGER_MODE_NORMAL);
@@ -2780,5 +2797,34 @@ class DatabaseHelper extends SQLiteOpenHelper {
 
     private String getDefaultDeviceName() {
         return mContext.getResources().getString(R.string.def_device_name_simple, Build.MODEL);
+    }
+
+    private void loadIntegerSettingFromCust(SQLiteStatement stmt, String key, int resid, String keyProperty) {
+        String keyValue = SystemProperties.get(keyProperty, null);
+        Log.e(TAG, "key:"+keyProperty+", keyValue:"+keyValue);
+        if (keyValue == null || keyValue.isEmpty()) {
+            loadSetting(stmt, key, Integer.toString(mContext.getResources().getInteger(resid)));
+        } else {
+            loadSetting(stmt, key, keyValue);
+        }
+    }
+    
+    private void loadBooleanSettingFromCust(SQLiteStatement stmt, String key, int resid, String keyProperty) {
+        String keyValue = SystemProperties.get(keyProperty, null);
+        if (keyValue == null || keyValue.isEmpty()) {
+            loadSetting(stmt, key,
+                mContext.getResources().getBoolean(resid) ? "1" : "0");
+        } else {
+            loadSetting(stmt, key, keyValue);
+        }
+    }
+
+    private void loadSettingFromCust(SQLiteStatement stmt, String key, int defaultValue, String keyProperty) {
+        String keyValue = SystemProperties.get(keyProperty, null);
+        if (keyValue == null || keyValue.isEmpty()) {
+            loadSetting(stmt, key, defaultValue);
+        } else {
+            loadSetting(stmt, key, keyValue);
+        }
     }
 }

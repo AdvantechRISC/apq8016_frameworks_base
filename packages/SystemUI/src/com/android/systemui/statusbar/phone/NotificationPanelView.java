@@ -30,6 +30,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.util.MathUtils;
 import android.view.MotionEvent;
@@ -713,6 +714,10 @@ public class NotificationPanelView extends PanelView implements
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        boolean prop = SystemProperties.getBoolean("persist.qsm", true);
+        if(mStatusBarState == StatusBarState.SHADE && prop == false){
+            return false;
+        }
         if (mBlockTouches) {
             return false;
         }

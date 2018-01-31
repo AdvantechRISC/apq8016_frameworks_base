@@ -26,12 +26,16 @@ import android.app.StatusBarManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
+import android.os.SystemProperties;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -51,6 +55,7 @@ import com.android.systemui.R;
 import com.android.systemui.statusbar.policy.DeadZone;
 import com.android.systemui.statusbar.policy.KeyButtonView;
 
+import java.io.File;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -234,6 +239,14 @@ public class NavigationBarView extends LinearLayout {
     public View getCurrentView() {
         return mCurrentView;
     }
+    
+    public View getLeftCustomButton() {
+        return mCurrentView.findViewById(R.id.custom_button_left);
+    }
+    
+    public View getRightCustomButton() {
+        return mCurrentView.findViewById(R.id.custom_button_right);
+    }
 
     public View getRecentsButton() {
         return mCurrentView.findViewById(R.id.recent_apps);
@@ -343,9 +356,45 @@ public class NavigationBarView extends LinearLayout {
             disableRecent = false;
         }
 
-        getBackButton()   .setVisibility(disableBack       ? View.INVISIBLE : View.VISIBLE);
-        getHomeButton()   .setVisibility(disableHome       ? View.INVISIBLE : View.VISIBLE);
-        getRecentsButton().setVisibility(disableRecent     ? View.INVISIBLE : View.VISIBLE);
+        //getBackButton()   .setVisibility(disableBack       ? View.INVISIBLE : View.VISIBLE);
+        //getHomeButton()   .setVisibility(disableHome       ? View.INVISIBLE : View.VISIBLE);
+        //getRecentsButton().setVisibility(disableRecent     ? View.INVISIBLE : View.VISIBLE);
+        setButtonVisible(getBackButton(), "persist.navbar.back");
+        setButtonVisible(getHomeButton(), "persist.navbar.home");
+        setButtonVisible(getRecentsButton(), "persist.navbar.recent");
+        boolean propLeft = SystemProperties.getBoolean("persist.cust.navi.add.left", true);
+        boolean propRight = SystemProperties.getBoolean("persist.cust.navi.add.right", true);
+        getLeftCustomButton().setVisibility(propLeft ? View.VISIBLE : View.GONE);
+        getRightCustomButton().setVisibility(propRight ? View.VISIBLE : View.GONE);
+        setCustomButtonBackgroundDrawable(getLeftCustomButton(), "persist.cust.navi.pic.left");
+        setCustomButtonBackgroundDrawable(getRightCustomButton(), "persist.cust.navi.pic.right");
+    }
+    
+    private void setButtonVisible(View view, String property){
+        boolean prop = SystemProperties.getBoolean(property, true);
+        view.setVisibility(prop ? View.VISIBLE : View.GONE);
+    }
+    
+    private void setCustomButtonBackgroundDrawable(View view, String property){
+        Log.d(TAG, "1");
+        String background_pic_path = SystemProperties.get(property, null);
+        Log.d(TAG, "2");
+		if(background_pic_path!=null && !background_pic_path.isEmpty()){
+            Log.d(TAG, "3");
+			File file = new File(background_pic_path);
+            Log.d(TAG, "4:"+background_pic_path);
+			//if(file.exists() && !file.isDirectory()) {
+                Log.d(TAG, "5");
+				Bitmap bitmap = BitmapFactory.decodeFile(background_pic_path);
+                if(bitmap!=null){
+                    Log.d(TAG, "6");
+                    Drawable drawable = new BitmapDrawable(mContext.getResources(), bitmap);
+                    Log.d(TAG, "7");
+                    view.setBackgroundDrawable(drawable);
+                    Log.d(TAG, "8");
+                }
+			//}
+		}
     }
 
     private boolean inLockTask() {

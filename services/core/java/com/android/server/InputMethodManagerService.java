@@ -88,6 +88,7 @@ import android.os.RemoteException;
 import android.os.ResultReceiver;
 import android.os.ServiceManager;
 import android.os.SystemClock;
+import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.os.UserManager;
 import android.provider.Settings;
@@ -1760,7 +1761,9 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
                         mStatusBar.setIcon("ime", packageName, iconId, 0,
                                 contentDescription  != null
                                         ? contentDescription.toString() : null);
-                        mStatusBar.setIconVisibility("ime", true);
+                        //mStatusBar.setIconVisibility("ime", true);
+                        boolean prop = SystemProperties.getBoolean("persist.sb.ic.ime", true);
+                        mStatusBar.setIconVisibility("ime", (prop));
                     }
                 }
             }

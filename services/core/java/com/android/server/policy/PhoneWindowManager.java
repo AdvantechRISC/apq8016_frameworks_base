@@ -1653,6 +1653,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         mStatusBarHeight =
                 res.getDimensionPixelSize(com.android.internal.R.dimen.status_bar_height);
+        int sbHeight = SystemProperties.getInt("persist.statusbar.height", mStatusBarHeight);
+        if(!SystemProperties.getBoolean("persist.statusbar", true)){
+            mStatusBarHeight = 0;
+        } else {
+            mStatusBarHeight = sbHeight;
+        }
 
         // Height of the navigation bar when presented horizontally at bottom
         mNavigationBarHeightForRotation[mPortraitRotation] =
@@ -3637,11 +3643,21 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 // size.  We need to do this directly, instead of relying on
                 // it to bubble up from the nav bar, because this needs to
                 // change atomically with screen rotations.
+                boolean hideNavBar = false;
+                if (!SystemProperties.getBoolean("persist.navbar", true)){
+                    hideNavBar = true;
+                }
+                int navbarH = SystemProperties.getInt("persist.navbar.height", 0);
                 mNavigationBarOnBottom = (!mNavigationBarCanMove || displayWidth < displayHeight);
                 if (mNavigationBarOnBottom) {
                     // It's a system nav bar or a portrait screen; nav bar goes on bottom.
                     int top = displayHeight - overscanBottom
                             - mNavigationBarHeightForRotation[displayRotation];
+                    if(hideNavBar){
+                        top = displayHeight - overscanBottom;
+                    } else {
+                        top = displayHeight - overscanBottom - navbarH;
+                    }
                     mTmpNavigationFrame.set(0, top, displayWidth, displayHeight - overscanBottom);
                     mStableBottom = mStableFullscreenBottom = mTmpNavigationFrame.top;
                     if (transientNavBarShowing) {
@@ -3667,6 +3683,11 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                     // Landscape screen; nav bar goes to the right.
                     int left = displayWidth - overscanRight
                             - mNavigationBarWidthForRotation[displayRotation];
+                    if(hideNavBar){
+                        left = displayWidth - overscanRight;
+                    } else {
+                        left = displayWidth - overscanRight - navbarH;
+                    }
                     mTmpNavigationFrame.set(left, 0, displayWidth - overscanRight, displayHeight);
                     mStableRight = mStableFullscreenRight = mTmpNavigationFrame.left;
                     if (transientNavBarShowing) {

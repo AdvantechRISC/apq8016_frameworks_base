@@ -53,6 +53,14 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 />
+            <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/custom_button_left"
+                android:layout_width="128dp" android:paddingStart="25dp" android:paddingEnd="25dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_sysbar_custom"
+                android:scaleType="centerInside"
+                android:layout_weight="0"
+                android:contentDescription="@string/accessibility_custom_buttom"
+                />
             <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/back"
                 android:layout_width="128dp" android:paddingStart="25dp" android:paddingEnd="25dp"
                 android:layout_height="match_parent"
@@ -79,6 +87,14 @@
                 android:scaleType="centerInside"
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_recent"
+                />
+            <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/custom_button_right"
+                android:layout_width="128dp" android:paddingStart="25dp" android:paddingEnd="25dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_sysbar_custom"
+                android:scaleType="centerInside"
+                android:layout_weight="0"
+                android:contentDescription="@string/accessibility_custom_buttom"
                 />
             <Space
                 android:layout_width="match_parent"
@@ -151,6 +167,15 @@
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_recent"
                 />
+            <ImageView
+                android:layout_width="128dp" android:paddingStart="25dp" android:paddingEnd="25dp"
+                android:layout_marginEnd="40dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_sysbar_lights_out_dot_small"
+                android:scaleType="center"
+                android:layout_weight="0"
+                android:contentDescription="@string/accessibility_custom_buttom"
+                />
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -201,6 +226,14 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 />
+            <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/custom_button_left"
+                android:layout_width="162dp" android:paddingStart="42dp" android:paddingEnd="42dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_sysbar_custom"
+                android:scaleType="centerInside"
+                android:layout_weight="0"
+                android:contentDescription="@string/accessibility_custom_buttom"
+                />
             <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/back"
                 android:layout_width="162dp" android:paddingStart="42dp" android:paddingEnd="42dp"
                 android:layout_height="match_parent"
@@ -227,6 +260,14 @@
                 android:scaleType="centerInside"
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_recent"
+                />
+            <com.android.systemui.statusbar.policy.KeyButtonView android:id="@+id/custom_button_right"
+                android:layout_width="162dp" android:paddingStart="42dp" android:paddingEnd="42dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_sysbar_custom"
+                android:scaleType="centerInside"
+                android:layout_weight="0"
+                android:contentDescription="@string/accessibility_custom_buttom"
                 />
             <Space
                 android:layout_width="match_parent"
@@ -297,6 +338,15 @@
                 android:scaleType="center"
                 android:layout_weight="0"
                 android:contentDescription="@string/accessibility_recent"
+                />
+            <ImageView
+                android:layout_width="162dp" android:paddingStart="42dp" android:paddingEnd="42dp"
+                android:layout_marginEnd="40dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_sysbar_lights_out_dot_small"
+                android:scaleType="center"
+                android:layout_weight="0"
+                android:contentDescription="@string/accessibility_custom_buttom"
                 />
             <Space
                 android:layout_width="match_parent"
